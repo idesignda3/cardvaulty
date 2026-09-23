@@ -1,155 +1,285 @@
+import Image from "next/image";
 import Link from "next/link";
 
-const features = [
-  {
-    title: "AI scan",
-    body: "Point a camera at a card and identify set, number and rarity in seconds. Scan tools land in a later phase — the vault is ready now.",
-    cta: { href: "/auth?mode=register", label: "Start free vault" },
-  },
+const trustItems = [
   {
     title: "Private vault",
-    body: "Your cards stay yours. Every vault query is scoped to your account — quantity, condition, notes and favourites in one place.",
-    cta: { href: "/vault", label: "Open vault" },
+    subtitle: "Your cards stay yours",
+    icon: (
+      <path
+        d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        fill="none"
+      />
+    ),
   },
   {
-    title: "Estimated prices",
-    body: "Store your own average estimates in pence. Live market feeds are optional later — we never invent prices for you.",
-    cta: { href: "/#prices", label: "How pricing works" },
+    title: "Fast scan",
+    subtitle: "Identify in seconds",
+    icon: (
+      <path
+        d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    ),
+  },
+  {
+    title: "Price estimates",
+    subtitle: "Honestly labelled",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.8" fill="none" />
+        <path d="M12 7v10M9.5 9.5c.6-1 1.5-1.5 2.5-1.5 1.4 0 2.5.8 2.5 2s-1.1 2-2.5 2h-1c-1.4 0-2.5.8-2.5 2s1.1 2 2.5 2c1 0 1.9-.5 2.5-1.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+      </>
+    ),
+  },
+  {
+    title: "UK collectors",
+    subtitle: "GBP-first defaults",
+    icon: (
+      <path
+        d="M12 21s-7-4.5-7-11a7 7 0 0114 0c0 6.5-7 11-7 11z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        fill="none"
+      />
+    ),
+  },
+];
+
+const categories = [
+  {
+    href: "/auth",
+    label: "Scan",
+    blurb: "Snap & identify cards",
+    accent: "from-yellow-300/20",
+  },
+  {
+    href: "/vault",
+    label: "Vault",
+    blurb: "Private collection hub",
+    accent: "from-blue-400/20",
+  },
+  {
+    href: "/prices",
+    label: "Prices",
+    blurb: "Browse estimates",
+    accent: "from-emerald-400/20",
+  },
+  {
+    href: "/dashboard",
+    label: "Wishlist",
+    blurb: "Track what you want",
+    accent: "from-fuchsia-400/20",
+  },
+  {
+    href: "/sets",
+    label: "Shop",
+    blurb: "Browse sets & singles",
+    accent: "from-orange-400/20",
   },
 ];
 
 export default function HomePage() {
   return (
     <main className="flex-1">
-      <section className="relative overflow-hidden border-b border-zinc-200 bg-gradient-to-b from-emerald-50 to-zinc-50 dark:border-zinc-800 dark:from-emerald-950/40 dark:to-zinc-950">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:items-center lg:py-28">
-          <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-400">
+      {/* Hero */}
+      <section className="hero-glow relative overflow-hidden border-b border-white/10">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+        {/* decorative lightning SVG */}
+        <svg
+          aria-hidden
+          className="pointer-events-none absolute -left-6 top-16 h-40 w-24 text-brand opacity-70 sm:left-8"
+          viewBox="0 0 80 160"
+          fill="none"
+        >
+          <path
+            className="lightning-stroke"
+            d="M48 8L18 78h28L28 152l42-86H48L62 8H48z"
+            strokeWidth="3"
+            fill="rgba(232,255,71,0.15)"
+          />
+        </svg>
+
+        <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 pb-10 pt-12 sm:px-6 lg:grid-cols-2 lg:gap-4 lg:pb-14 lg:pt-16">
+          <div className="relative z-10 order-2 lg:order-1">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-brand">
               UK Pokémon card vault
             </p>
-            <h1 className="text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl dark:text-zinc-50">
-              Your collection. Scanned, valued &amp; organised.
+            <h1 className="text-4xl font-black uppercase leading-[0.95] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Vault.
+              <br />
+              Scan.
+              <br />
+              <span className="text-brand drop-shadow-[0_0_24px_rgba(232,255,71,0.45)]">
+                Collect.
+              </span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-zinc-600 dark:text-zinc-300">
-              CardVaulty helps you identify cards, keep a private vault, and track estimated
-              values — built for collectors who want control of their own data.
+            <p className="mt-5 max-w-md text-base leading-7 text-zinc-300 sm:text-lg">
+              Private vault for UK collectors. Identify cards, organise your binder, and track
+              estimated values — without the Shopify storefront noise.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/auth?mode=register"
-                className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500"
+                className="neon-btn inline-flex items-center rounded-xl px-6 py-3 text-sm font-black uppercase tracking-wide"
               >
                 Create free vault
               </Link>
               <Link
-                href="/auth"
-                className="rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                href="/prices"
+                className="inline-flex items-center rounded-xl border border-glow-blue/50 bg-glow-blue/10 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-[0_0_20px_rgba(59,130,246,0.25)] hover:bg-glow-blue/20"
               >
-                Sign in
-              </Link>
-              <Link
-                href="/#prices"
-                className="rounded-xl px-5 py-3 text-sm font-semibold text-emerald-800 hover:underline dark:text-emerald-300"
-              >
-                View prices info
+                Browse prices
               </Link>
             </div>
-            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-600 dark:text-zinc-400">
-              <li>✓ Private vault</li>
-              <li>✓ Email sign-in (Google optional)</li>
-              <li>✓ Self-hosted ready</li>
-            </ul>
           </div>
-          <div className="rounded-2xl border border-emerald-200/60 bg-white p-6 shadow-lg dark:border-emerald-900 dark:bg-zinc-900">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Phase 1 MVP</p>
-            <h2 className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-50">Vault first</h2>
-            <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-              Register, add cards by hand, edit quantity and notes, and see dashboard totals.
-              AI scan and live market prices come next — placeholders only for now.
+
+          <div className="relative order-1 mx-auto w-full max-w-md lg:order-2 lg:max-w-none">
+            <div
+              aria-hidden
+              className="absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-glow-blue/30 blur-3xl"
+            />
+            <div className="relative mx-auto aspect-square w-full max-w-[420px]">
+              <Image
+                src="/hero-pikachu.png"
+                alt="Pikachu leaping with lightning — CardVaulty hero"
+                fill
+                priority
+                sizes="(max-width: 768px) 90vw, 420px"
+                className="object-contain drop-shadow-[0_20px_60px_rgba(59,130,246,0.35)]"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Trust bar */}
+        <div className="relative border-t border-white/10 bg-black/40">
+          <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 py-5 sm:grid-cols-4 sm:px-6 sm:py-6">
+            {trustItems.map((item) => (
+              <li key={item.title} className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-brand/30 bg-brand/10 text-brand">
+                  <svg width="18" height="18" viewBox="0 0 24 24">
+                    {item.icon}
+                  </svg>
+                </span>
+                <span>
+                  <span className="block text-sm font-bold text-white">{item.title}</span>
+                  <span className="block text-xs text-zinc-400">{item.subtitle}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section className="border-b border-white/10 bg-[#0a0d16] py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">Explore</p>
+              <h2 className="mt-2 text-2xl font-black uppercase tracking-tight text-white sm:text-3xl">
+                Shop by category
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm text-zinc-400">
+              Jump into the tools that matter — scan, vault, prices, wishlist and sets.
             </p>
-            <div className="mt-6 grid grid-cols-3 gap-3 text-center text-sm">
-              <div className="rounded-xl bg-zinc-50 p-3 dark:bg-zinc-800">
-                <p className="font-semibold text-zinc-900 dark:text-zinc-50">Scan</p>
-                <p className="mt-1 text-xs text-zinc-500">Soon</p>
-              </div>
-              <div className="rounded-xl bg-emerald-50 p-3 dark:bg-emerald-950">
-                <p className="font-semibold text-emerald-800 dark:text-emerald-300">Vault</p>
-                <p className="mt-1 text-xs text-emerald-700/80 dark:text-emerald-400">Ready</p>
-              </div>
-              <div className="rounded-xl bg-zinc-50 p-3 dark:bg-zinc-800">
-                <p className="font-semibold text-zinc-900 dark:text-zinc-50">Prices</p>
-                <p className="mt-1 text-xs text-zinc-500">Manual</p>
-              </div>
-            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {categories.map((cat) => (
+              <Link
+                key={cat.label}
+                href={cat.href}
+                className="panel-card group relative overflow-hidden rounded-2xl p-4 transition hover:-translate-y-0.5 hover:border-brand/40"
+              >
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${cat.accent} to-transparent opacity-60 transition group-hover:opacity-90`}
+                />
+                <div className="relative">
+                  <div className="mb-8 flex h-14 items-end">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand/40 bg-brand/15 text-sm font-black text-brand">
+                      {cat.label.slice(0, 1)}
+                    </span>
+                  </div>
+                  <p className="text-sm font-black uppercase tracking-wide text-white">{cat.label}</p>
+                  <p className="mt-1 text-xs text-zinc-400">{cat.blurb}</p>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      <section id="features" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <h2 className="text-center text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-          Built for collectors
-        </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-center text-zinc-600 dark:text-zinc-400">
-          Same purpose as the live CardVaulty product — scan, vault, prices — rebuilt clean for
-          self-hosting.
-        </p>
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {features.map((f) => (
-            <article
-              key={f.title}
-              className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
-            >
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">{f.title}</h3>
-              <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{f.body}</p>
-              <Link
-                href={f.cta.href}
-                className="mt-5 inline-block text-sm font-semibold text-emerald-700 hover:underline dark:text-emerald-400"
-              >
-                {f.cta.label} →
-              </Link>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section
-        id="prices"
-        className="border-y border-zinc-200 bg-zinc-100/70 py-16 dark:border-zinc-800 dark:bg-zinc-900/50"
-      >
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
-          <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-            Estimated prices, honestly labelled
+      {/* How it works */}
+      <section className="bg-[#07090f] py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <h2 className="text-center text-2xl font-black uppercase tracking-tight text-white sm:text-3xl">
+            How it works
           </h2>
-          <p className="mt-4 text-zinc-600 dark:text-zinc-400">
-            Phase 1 stores optional average estimates you enter yourself (integer pence). We do not
-            invent live market prices. Future market integrations will carry clear disclaimers —
-            estimates are not sale guarantees.
+          <p className="mx-auto mt-3 max-w-2xl text-center text-zinc-400">
+            Three steps from binder pile to organised vault.
           </p>
-          <Link
-            href="/auth?mode=register"
-            className="mt-8 inline-flex rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-500"
-          >
-            Create free account
-          </Link>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {[
+              {
+                n: "01",
+                title: "Scan",
+                body: "Point your camera or upload a photo. AI candidates appear — you confirm before anything is saved.",
+              },
+              {
+                n: "02",
+                title: "Vault",
+                body: "Keep quantity, condition, notes and favourites in a private vault scoped to your account.",
+              },
+              {
+                n: "03",
+                title: "Track",
+                body: "Browse estimated prices and set your own averages. Estimates are labelled — never invented as guarantees.",
+              },
+            ].map((step) => (
+              <article key={step.n} className="panel-card rounded-2xl p-6">
+                <p className="text-xs font-black tracking-[0.2em] text-brand">{step.n}</p>
+                <h3 className="mt-2 text-xl font-bold text-white">{step.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-zinc-400">{step.body}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <div className="rounded-2xl bg-emerald-700 px-6 py-12 text-center text-white sm:px-12">
-          <h2 className="text-2xl font-semibold sm:text-3xl">Ready to organise your binder?</h2>
-          <p className="mx-auto mt-3 max-w-xl text-emerald-50">
-            Sign up with email and password, then add your first cards to a private vault.
+      {/* Bottom CTA */}
+      <section className="border-t border-white/10 bg-gradient-to-b from-[#0b1020] to-[#05070c] py-16">
+        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
+          <h2 className="text-2xl font-black uppercase tracking-tight text-white sm:text-3xl">
+            Ready to organise your binder?
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-zinc-400">
+            Create a free CardVaulty account and start your private UK Pokémon card vault today.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               href="/auth?mode=register"
-              className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-emerald-800 hover:bg-emerald-50"
+              className="neon-btn inline-flex rounded-xl px-6 py-3 text-sm font-black uppercase tracking-wide"
             >
               Create free vault
             </Link>
             <Link
               href="/auth"
-              className="rounded-xl border border-emerald-400/50 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-600"
+              className="inline-flex rounded-xl border border-white/20 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white hover:border-brand/50 hover:text-brand"
             >
               Sign in
             </Link>

@@ -1,5 +1,5 @@
-// CardVaulty Phase 1 — Postgres schema
-// App enforces userId on all VaultCard queries (no DB RLS in Phase 1).
+// CardVaulty Phase 1+2 — Postgres schema
+// App enforces userId on all VaultCard queries (no DB RLS yet).
 
 generator client {
   provider = "prisma-client-js"
@@ -16,14 +16,14 @@ enum Role {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  email         String     @unique
+  id            String      @id @default(cuid())
+  email         String      @unique
   emailVerified DateTime?
   name          String?
   image         String?
   passwordHash  String?
-  role          Role       @default(user)
-  createdAt     DateTime   @default(now())
+  role          Role        @default(user)
+  createdAt     DateTime    @default(now())
   accounts      Account[]
   sessions      Session[]
   vaultCards    VaultCard[]
@@ -87,4 +87,53 @@ model VaultCard {
 
   @@index([userId])
   @@index([userId, favourite])
+  @@index([userId, tcgId])
+}
+
+/// Generic JSON response cache (sets lists, search pages, etc.)
+model ApiCache {
+  key       String   @id
+  payload   Json
+  expiresAt DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([expiresAt])
+}
+
+/// Per-card snapshot from Pokémon TCG API (and optional price minor units).
+model CardCache {
+  tcgId             String   @id
+  name              String
+  setId             String?
+  setName           String?
+  number            String?
+  rarity            String?
+  imageSmall        String?
+  imageLarge        String?
+  /// Subset of API card JSON used for display
+  payload           Json
+  /// TCGPlayer market (or mid) in USD cents when API provided a figure; null = none
+  tcgMarketUsdCents Int?
+  /// Cardmarket trend/average in EUR cents when API provided a figure; null = none
+  cmTrendEurCents   Int?
+  priceUpdatedAt    DateTime?
+  fetchedAt         DateTime @default(now())
+  expiresAt         DateTime
+
+  @@index([setId])
+  @@index([expiresAt])
+}
+
+/// Daily FX snapshot (Frankfurter). rate = quote per 1 base.
+model FxRate {
+  id        String   @id @default(cuid())
+  base      String
+  quote     String
+  /// Multiply amount in `base` by rate to get `quote`
+  rate      Float
+  asOfDate  DateTime @db.Date
+  fetchedAt DateTime @default(now())
+
+  @@unique([base, quote, asOfDate])
+  @@index([base, quote])
 }

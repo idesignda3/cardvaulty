@@ -9,3 +9,9 @@ export async function requireUser() {
   }
   return session.user;
 }
+
+/** Optional session user (null when signed out). Does not redirect. */
+export async function getOptionalUser() {
+  const session = await auth();
+  return session?.user?.id ? session.user : null;
+}

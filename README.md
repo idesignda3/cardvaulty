@@ -2,14 +2,18 @@
 
 Self-hosted Pokémon card vault (scan, vault, prices, wishlist). UK-first.
 
-**Phase 1 (MVP):** marketing landing page, email/password auth (optional Google), private vault CRUD, dashboard stub, account page, legal placeholders.
+**Phase 1:** marketing landing, email/password auth (optional Google), private vault CRUD, dashboard stub, account, legal stubs.
+
+**Phase 2:** public sets catalogue + price pages via [Pokémon TCG API](https://docs.pokemontcg.io/), Frankfurter FX (GBP default), Redis/Postgres response cache, optional TCGdex image fallback.
+
+UI is intentionally plain (functional Tailwind) until design is decided.
 
 ## Stack
 
 - **Next.js** 16 (App Router, TypeScript, Tailwind CSS)
 - **Auth.js** (NextAuth v5) — credentials + optional Google OAuth
 - **Prisma** + **Postgres** 16
-- **Redis** 7 (reserved for later)
+- **Redis** 7 (optional cache; Postgres `ApiCache` is the durable fallback)
 - **nginx** reverse-proxy in front of the app
 
 ## Prerequisites
@@ -30,16 +34,13 @@ cp .env.example .env
 #   REDIS_URL=redis://redis:6379
 #   APP_URL=http://localhost
 #   NEXTAUTH_URL=http://localhost
+# Optional: POKEMONTCG_API_KEY from https://dev.pokemontcg.io/
 
 docker compose up --build -d
-
-# Apply migrations (run once against the Compose Postgres):
 docker compose exec app npx prisma migrate deploy
-# If the app image lacks the prisma CLI path, run from a one-off container:
-# docker compose run --rm -e DATABASE_URL=postgresql://cardvaulty:…@postgres:5432/cardvaulty app npx prisma migrate deploy
 ```
 
-Alternatively start infra only and migrate from the host:
+Infra-only + local Next:
 
 ```bash
 docker compose up -d postgres redis
@@ -59,24 +60,20 @@ npx prisma migrate deploy    # apply committed migrations (prod / CI)
 npx prisma migrate dev       # create/apply migrations in development
 ```
 
-Initial migration lives in `prisma/migrations/`.
+Migrations live in `prisma/migrations/`.
 
 ## Auth
 
 - Register / sign in at `/auth` with email + password (min 8 characters).
-- Optional Google OAuth when `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set; the button is hidden when unset.
+- Optional Google OAuth when `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set.
 - Sessions use JWT (`AUTH_SECRET` required).
 
 ### Google OAuth callback URLs
 
-In Google Cloud Console → Credentials → OAuth 2.0 Client:
-
 | Type | Value |
 |---|---|
-| Authorized JavaScript origins | `APP_URL` (e.g. `http://localhost:3000` or `https://your.domain`) |
+| Authorized JavaScript origins | `APP_URL` |
 | Authorized redirect URI | `{APP_URL}/api/auth/callback/google` |
-
-Also set `NEXTAUTH_URL` / `AUTH_URL` to the same public origin.
 
 ## Environment
 
@@ -85,26 +82,39 @@ See `.env.example`:
 | Variable | Purpose |
 |---|---|
 | `APP_URL` | Public base URL |
-| `NEXTAUTH_URL` | Auth.js canonical URL (keep aligned with `APP_URL`) |
+| `NEXTAUTH_URL` | Auth.js canonical URL (align with `APP_URL`) |
 | `AUTH_SECRET` | Session signing secret |
 | `DATABASE_URL` | Postgres connection string |
-| `REDIS_URL` | Redis connection string |
+| `REDIS_URL` | Redis connection string (optional cache) |
+| `POKEMONTCG_API_KEY` | Optional Pokémon TCG API key (higher rate limits) |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional Google OAuth |
 | `POSTGRES_*` | Postgres bootstrap for Compose |
 
 Never commit real secrets. `.env` is gitignored.
 
-## Security model (Phase 1)
+## Pricing & catalogue (Phase 2)
+
+- **Source:** Pokémon TCG API (`api.pokemontcg.io`). Prices are only shown when `tcgplayer` / `cardmarket` fields exist on the API response. The app never invents market figures.
+- **FX:** [Frankfurter](https://www.frankfurter.app/) (`api.frankfurter.dev`). Default display currency **GBP**; switch to EUR/USD via `?currency=`. Rates cached ~24h (Redis + `FxRate` table).
+- **Cache:** Redis when available; always mirrored in Postgres `ApiCache` / `CardCache`.
+- **Images:** Pokémon TCG images first; if missing, optional [TCGdex](https://tcgdex.dev/) fallback.
+- **Money in vault:** still stored as integer pence (`priceAvgPence`).
+
+## Security model
 
 - **No Postgres RLS** yet. Isolation is enforced in the application: every vault query filters by `userId` from the signed-in session.
-- Money is stored as **integer pence** (`priceAvgPence`). The app does not invent live market prices.
+- Sets/prices routes are public (SEO-friendly). Signed-in users see owned counts on set checklists; guests get a light sign-in hint only.
 
 ## Routes
 
 | Path | Access | Notes |
 |---|---|---|
-| `/` | Public | Marketing landing (scan / vault / prices CTAs) |
+| `/` | Public | Marketing landing |
 | `/auth` | Public | Register + sign in |
+| `/sets` | Public | Set list (API) |
+| `/sets/[setId]` | Public | Set checklist; owned counts if signed in |
+| `/prices` | Public | Recent sets + sample API estimates |
+| `/prices/[cardId]` | Public | Card price detail (API fields only) |
 | `/vault` | Auth | List / add / edit / delete cards |
 | `/dashboard` | Auth | Card count, total qty, sum of stored estimates |
 | `/account` | Auth | Profile + sign out |
@@ -114,6 +124,7 @@ Never commit real secrets. `.env` is gitignored.
 
 ```
 src/app/           App Router pages + server actions
+src/lib/           Prisma, money, pokemontcg, fx, cache, tcgdex
 src/auth.ts        Auth.js (NextAuth v5) config
 src/proxy.ts       Optimistic auth gate for protected routes
 prisma/            Schema + migrations
@@ -124,10 +135,11 @@ docker-compose.yml app + postgres + redis + nginx
 ## Local development checklist
 
 1. `cp .env.example .env` and set `AUTH_SECRET`, `DATABASE_URL` (localhost), passwords.
-2. `docker compose up -d postgres redis`
-3. `npm install && npx prisma migrate deploy && npx prisma generate`
-4. `npm run dev` → http://localhost:3000
-5. Register at `/auth`, add a card on `/vault`, check totals on `/dashboard`.
+2. Optionally set `POKEMONTCG_API_KEY`.
+3. `docker compose up -d postgres redis`
+4. `npm install && npx prisma migrate deploy && npx prisma generate`
+5. `npm run dev` → http://localhost:3000
+6. Browse `/sets` and `/prices` (public). Register at `/auth`, add a vault card, check `/dashboard`.
 
 ## Licence
 

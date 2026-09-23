@@ -1,65 +1,120 @@
 import Link from "next/link";
 import { auth } from "@/auth";
+import { MobileNav } from "@/components/mobile-nav";
 
 const nav = [
-  { href: "/#features", label: "Features" },
-  { href: "/#prices", label: "Prices" },
+  { href: "/", label: "Home" },
+  { href: "/prices", label: "Prices" },
   { href: "/vault", label: "Vault" },
-  { href: "/dashboard", label: "Dashboard" },
+  { href: "/sets", label: "Shop" },
 ];
+
+function IconSearch() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M20 20l-3.5-3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconUser() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.8" />
+      <path
+        d="M5 19c1.5-3.2 3.8-5 7-5s5.5 1.8 7 5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function IconBag() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M6 8h12l-1 11H7L6 8z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path d="M9 8V7a3 3 0 016 0v1" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  );
+}
 
 export async function SiteHeader() {
   const session = await auth();
   const signedIn = Boolean(session?.user);
+  const accountHref = signedIn ? "/account" : "/auth";
 
   return (
-    <header className="border-b border-zinc-200/80 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-sm font-bold text-white">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#07090f]/85 backdrop-blur-md">
+      <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-sm font-black text-brand-ink shadow-[0_0_18px_rgba(232,255,71,0.45)]">
             CV
           </span>
-          <span>CardVaulty</span>
+          <span className="text-lg font-bold tracking-tight text-white">
+            Card<span className="text-brand">Vaulty</span>
+          </span>
         </Link>
-        <nav className="hidden items-center gap-6 text-sm text-zinc-600 dark:text-zinc-300 md:flex">
+
+        <nav className="hidden items-center gap-1 text-sm font-semibold uppercase tracking-wide text-zinc-300 md:flex">
           {nav.map((item) => (
-            <Link key={item.href} href={item.href} className="hover:text-emerald-700 dark:hover:text-emerald-400">
+            <Link
+              key={item.href}
+              href={item.href}
+              className="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-brand"
+            >
               {item.label}
             </Link>
           ))}
+          <Link
+            href={accountHref}
+            className="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-brand"
+          >
+            Account
+          </Link>
         </nav>
-        <div className="flex items-center gap-2 text-sm">
+
+        <div className="flex items-center gap-2">
+          <span className="hidden items-center gap-1 text-brand sm:flex" aria-hidden>
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5">
+              <IconSearch />
+            </span>
+            <Link
+              href={accountHref}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 hover:border-brand/40"
+              aria-label={signedIn ? "Account" : "Sign in"}
+            >
+              <IconUser />
+            </Link>
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5">
+              <IconBag />
+            </span>
+          </span>
+
           {signedIn ? (
-            <>
-              <Link
-                href="/account"
-                className="rounded-lg px-3 py-1.5 text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
-              >
-                Account
-              </Link>
-              <Link
-                href="/vault"
-                className="rounded-lg bg-emerald-600 px-3 py-1.5 font-medium text-white hover:bg-emerald-500"
-              >
-                Open vault
-              </Link>
-            </>
+            <Link
+              href="/vault"
+              className="neon-btn hidden rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-wide sm:inline-flex"
+            >
+              Open vault
+            </Link>
           ) : (
-            <>
-              <Link
-                href="/auth"
-                className="rounded-lg px-3 py-1.5 text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/auth?mode=register"
-                className="rounded-lg bg-emerald-600 px-3 py-1.5 font-medium text-white hover:bg-emerald-500"
-              >
-                Create vault
-              </Link>
-            </>
+            <Link
+              href="/auth?mode=register"
+              className="neon-btn hidden rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-wide sm:inline-flex"
+            >
+              Free vault
+            </Link>
           )}
+
+          <MobileNav accountHref={accountHref} />
         </div>
       </div>
     </header>
