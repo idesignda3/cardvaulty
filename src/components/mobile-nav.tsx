@@ -24,7 +24,7 @@ export function MobileNav({ accountHref }: { accountHref: string }) {
         aria-expanded={open}
         aria-label="Open menu"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 text-brand"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-[#0b1020]"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
           {open ? (
@@ -35,14 +35,14 @@ export function MobileNav({ accountHref }: { accountHref: string }) {
         </svg>
       </button>
       {open ? (
-        <div className="absolute left-0 right-0 top-16 z-50 border-b border-white/10 bg-[#07090f]/95 px-4 py-4 backdrop-blur-md">
+        <div className="absolute left-0 right-0 top-16 z-50 border-b border-slate-200/80 bg-white/95 px-4 py-4 shadow-lg backdrop-blur-md">
           <nav className="flex flex-col gap-1">
             {items.map((item) => (
               <Link
                 key={item.href + item.label}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-semibold uppercase tracking-wide text-zinc-200 hover:bg-white/5 hover:text-brand"
+                className="rounded-lg px-3 py-2.5 text-sm font-semibold uppercase tracking-wide text-slate-700 hover:bg-slate-100 hover:text-[#0b1020]"
               >
                 {item.label}
               </Link>

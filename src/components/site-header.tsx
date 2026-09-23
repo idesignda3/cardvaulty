@@ -52,48 +52,48 @@ export async function SiteHeader() {
   const accountHref = signedIn ? "/account" : "/auth";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#07090f]/85 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
       <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
           <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-sm font-black text-brand-ink shadow-[0_0_18px_rgba(232,255,71,0.45)]">
             CV
           </span>
-          <span className="text-lg font-bold tracking-tight text-white">
-            Card<span className="text-brand">Vaulty</span>
+          <span className="text-lg font-bold tracking-tight text-[#0b1020]">
+            Card<span className="text-brand drop-shadow-[0_0_10px_rgba(232,255,71,0.55)]">Vaulty</span>
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-1 text-sm font-semibold uppercase tracking-wide text-zinc-300 md:flex">
+        <nav className="hidden items-center gap-1 text-sm font-semibold uppercase tracking-wide text-slate-600 md:flex">
           {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-brand"
+              className="rounded-lg px-3 py-2 hover:bg-slate-100 hover:text-[#0b1020]"
             >
               {item.label}
             </Link>
           ))}
           <Link
             href={accountHref}
-            className="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-brand"
+            className="rounded-lg px-3 py-2 hover:bg-slate-100 hover:text-[#0b1020]"
           >
             Account
           </Link>
         </nav>
 
         <div className="flex items-center gap-2">
-          <span className="hidden items-center gap-1 text-brand sm:flex" aria-hidden>
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5">
+          <span className="hidden items-center gap-1 text-slate-600 sm:flex" aria-hidden>
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white">
               <IconSearch />
             </span>
             <Link
               href={accountHref}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 hover:border-brand/40"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white hover:border-brand/50"
               aria-label={signedIn ? "Account" : "Sign in"}
             >
               <IconUser />
             </Link>
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white">
               <IconBag />
             </span>
           </span>
